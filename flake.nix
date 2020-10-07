@@ -1,8 +1,12 @@
 {
   outputs = { self, nixpkgs }: {
-    packages = builtins.mapAttrs
-      (system: pkgs: { hello = pkgs.callPackage ./hello.nix { }; })
-      nixpkgs.legacyPackages;
+    packages = builtins.mapAttrs (system: pkgs: {
+      hello = pkgs.callPackage ./hello.nix {
+        version = ''
+          Hello ${self.rev or self.lastModifiedDate},
+          nixpkgs ${nixpkgs.rev or nixpkgs.lastModifiedDate}'';
+      };
+    }) nixpkgs.legacyPackages;
 
     defaultPackage =
       builtins.mapAttrs (_: packages: packages.hello) self.packages;
